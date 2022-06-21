@@ -1,0 +1,124 @@
+create table microsec.pais(
+cod_pais varchar (3),
+nombre_pais varchar (30),
+constraint un_pais unique (cod_pais),
+constraint nn_nombre_pais check (nombre_pais is not null),
+constraint pk_pais primary key (cod_pais)
+);
+
+create table microsec.departamento(
+cod_departamento varchar (2),
+cod_pais varchar (3),
+nombre_departamento varchar (30)
+constraint nn_nombre_departamento check (nombre_departamento is not null),
+constraint un_departamento unique (cod_departamento),
+constraint fk_pais_departamento foreign key (cod_pais)
+references microsec.pais (cod_pais),
+constraint pk_departamento primary key (cod_pais,cod_departamento)
+);
+
+create table microsec.ciudad(
+cod_ciudad varchar (3),
+cod_departamento varchar (2),
+cod_pais varchar(3),
+nombre_ciudad varchar(30),
+constraint un_ciudad unique (cod_ciudad),
+constraint nn_nombre_ciudad check (nombre_ciudad is not null),
+constraint fk_pais_departamento_ciudad foreign key (cod_pais,cod_departamento)
+references microsec.departamento (cod_pais,cod_departamento),
+constraint pk_ciudad primary key (cod_pais,cod_departamento,cod_ciudad)
+);
+
+create table microsec.administrador(
+id_admin serial,
+documento varchar(15),
+nombre1 varchar (30),
+nombre2 varchar (30),
+apellido1 varchar (30),
+apellido2 varchar (30),
+sexo varchar (1),
+edad integer,
+email varchar(50),
+clave varchar(250),
+cod_pais varchar(3),
+cod_departamento varchar (2),
+cod_ciudad varchar (3),
+constraint un_documento unique (documento),
+constraint nn_documento check (documento is not null),
+constraint nn_nombre1 check (nombre1 is not null),
+constraint nn_apellido1 check (apellido1 is not null),
+constraint nn_apellido2 check (apellido2 is not null),
+constraint ck_sexo check (sexo IN ('M','F' )),
+constraint nn_sexo check (sexo is not null),
+constraint nn_email check (email is not null),
+constraint nn_clave check (clave is not null),
+constraint fk_pais_administrador  foreign key (cod_pais) references microsec.pais (cod_pais),
+constraint fk_departamento_administrador  foreign key (cod_departamento) references microsec.departamento (cod_departamento),
+constraint fk_ciudad_administrador  foreign key (cod_ciudad) references microsec.ciudad (cod_ciudad),
+constraint pk_administrador primary key (id_admin)
+);
+create table microsec.ubicacion(
+id_ubicacion serial,
+nombre varchar(50),
+direccion varchar(50),
+fecha_creacion timestamp,
+cod_pais varchar(3),
+cod_departamento varchar (2),
+cod_ciudad varchar (3),
+constraint nn_nombre check (nombre is not null),
+constraint nn_direccion check (direccion is not null),
+constraint fk_pais_ubicacion  foreign key (cod_pais) references microsec.pais (cod_pais),
+constraint fk_departamento_ubicacion  foreign key (cod_departamento) references microsec.departamento (cod_departamento),
+constraint fk_ciudad_ubicacion  foreign key (cod_ciudad) references microsec.ciudad (cod_ciudad),
+constraint pk_ubicacion primary key  (id_ubicacion)
+);
+create table microsec.sensor(
+id_sensor serial,
+id_ubicacion serial,
+fecha_creacion timestamp,
+constraint fk_ubicacion_sensor foreign key (id_ubicacion) references microsec.ubicacion (id_ubicacion),
+constraint pk_sensor primary key (id_sensor)
+);
+create table microsec.notificacion(
+id_notificacion serial,
+id_sensor serial,
+id_ubicacion serial,
+fecha_hora timestamp,
+nivel_DB decimal,
+constraint ck_nivel_DB check (nivel_DB>45),
+constraint fk_ubicacion_notificacion foreign key (id_ubicacion) references microsec.ubicacion (id_ubicacion),
+constraint fk_sensor_notificacion foreign key (id_sensor) references microsec.sensor (id_sensor),
+constraint pk_notificacion primary key (id_notificacion)
+);
+insert into microsec.pais (cod_pais, nombre_pais)
+values ('123','Colombia');
+
+
+insert into microsec.departamento (cod_departamento, cod_pais, nombre_departamento)
+values ('23', '123', 'Santander');
+
+insert into microsec.ciudad (cod_ciudad, cod_departamento, cod_pais, nombre_ciudad)
+values ('456', '23', '123', 'Bucaramanga');
+
+insert into microsec.administrador (documento,nombre1,nombre2,apellido1,apellido2,sexo ,edad,email,clave,cod_pais,cod_departamento,cod_ciudad)
+values ('1049030809','Brainer','Ricardo','Gerena','Rojas','M','22','brgerenar@ufpso.edu.co','1234','123','23','456');
+
+insert into microsec.ubicacion (nombre,direccion,fecha_creacion,cod_pais,cod_departamento,cod_ciudad) 
+values ('mira folores','car 8A #16 -17',current_timestamp,'123','23','456');
+select * from microsec.ubicacion;
+
+
+select current_timestamp;
+
+
+select *from microsec.sensor;
+insert into microsec.sensor (fecha_creacion) values (current_timestamp);
+insert into microsec.notificacion (fecha_hora) values (current_timestamp);
+select * from microsec.notificacion;
+
+create table microsec.casa(
+fecha timestamp
+select current_timestamp;
+);
+insert into microsec.casa (fecha) values (current_timestamp);
+select * from microsec.casa;
